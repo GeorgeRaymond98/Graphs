@@ -54,10 +54,8 @@ class Graph:
 		visited = set()
 		to_visit = Stack()
 		to_visit.push(Vertex(starting_vertex))
-
 		while to_visit.size():
 			current_vertex = to_visit.pop()
-
 			if current_vertex in visited:
 				continue
 			visited.add(current_vertex)
@@ -69,7 +67,6 @@ class Graph:
 
 		if not isinstance(starting_vertex, Vertex):
 			starting_vertex = Vertex(starting_vertex)
-
 		if visited is None:
 			visited = set()
 		visited.add(starting_vertex)
@@ -95,7 +92,6 @@ class Graph:
 				continue
 			else:
 				visited.add(current_path[-1])
-                
 				for vertex in self.vertices[current_path[-1]]:
 					to_visit.enqueue(current_path + [vertex])
 
@@ -120,103 +116,102 @@ class Graph:
 				for vertex in self.vertices[current_path[-1]]:
 					to_visit.push(current_path + [vertex])
 
-	def dft_recursive(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
-        This should be done using recursion.
-        """
-        pass  
+	def dfs_recursive(self, starting_vertex, destination_vertex):
+		return [
+			v.vid for v in
+			self._dfs_recursive_v(starting_vertex, destination_vertex)
+		]
 
-    def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        pass 
+	def _dfs_recursive_v(self, starting_vertex, destination_vertex, visited=None):
 
-    def dfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-        """
-        pass  
+		if visited is None:
+			visited = set()
+		if not isinstance(starting_vertex, Vertex):
+			starting_vertex = Vertex(starting_vertex)
+		if not isinstance(destination_vertex, Vertex):
+			destination_vertex = Vertex(destination_vertex)
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-        This should be done using recursion.
-        """
-        pass  
+		path = [starting_vertex]
+		visited.add(starting_vertex)
+		for vertex in self.vertices[starting_vertex]:
+			if vertex == destination_vertex:
+				return path + [destination_vertex]
+			elif vertex in visited:
+				continue
+			else:
+				new_path = self._dfs_recursive_v(vertex, destination_vertex, visited=visited)
+				if new_path is not None:
+					return path + new_path
+		return None
+
+	def _vertices_ids(self):
+		return {key.vid: {v.vid for v in val} for key, val in self.vertices.items()}
+
 
 if __name__ == '__main__':
-    graph = Graph()  # Instantiate your graph
-    # https://github.com/LambdaSchool/Graphs/blob/master/objectives/breadth-first-search/img/bfs-visit-order.png
-    graph.add_vertex(1)
-    graph.add_vertex(2)
-    graph.add_vertex(3)
-    graph.add_vertex(4)
-    graph.add_vertex(5)
-    graph.add_vertex(6)
-    graph.add_vertex(7)
-    graph.add_edge(5, 3)
-    graph.add_edge(6, 3)
-    graph.add_edge(7, 1)
-    graph.add_edge(4, 7)
-    graph.add_edge(1, 2)
-    graph.add_edge(7, 6)
-    graph.add_edge(2, 4)
-    graph.add_edge(3, 5)
-    graph.add_edge(2, 3)
-    graph.add_edge(4, 6)
+	graph = Graph()  # Instantiate your graph
+	# https://github.com/LambdaSchool/Graphs/blob/master/objectives/breadth-first-search/img/bfs-visit-order.png
+	graph.add_vertex(1)
+	graph.add_vertex(2)
+	graph.add_vertex(3)
+	graph.add_vertex(4)
+	graph.add_vertex(5)
+	graph.add_vertex(6)
+	graph.add_vertex(7)
+	graph.add_edge(5, 3)
+	graph.add_edge(6, 3)
+	graph.add_edge(7, 1)
+	graph.add_edge(4, 7)
+	graph.add_edge(1, 2)
+	graph.add_edge(7, 6)
+	graph.add_edge(2, 4)
+	graph.add_edge(3, 5)
+	graph.add_edge(2, 3)
+	graph.add_edge(4, 6)
 
-    '''
-    Should print:
-        {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
-    '''
-    print(graph.vertices)
+	'''
+	Should print:
+		{1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
+	'''
+	print(graph._vertices_ids())
 
-    '''
-    Valid BFT paths:
-        1, 2, 3, 4, 5, 6, 7
-        1, 2, 3, 4, 5, 7, 6
-        1, 2, 3, 4, 6, 7, 5
-        1, 2, 3, 4, 6, 5, 7
-        1, 2, 3, 4, 7, 6, 5
-        1, 2, 3, 4, 7, 5, 6
-        1, 2, 4, 3, 5, 6, 7
-        1, 2, 4, 3, 5, 7, 6
-        1, 2, 4, 3, 6, 7, 5
-        1, 2, 4, 3, 6, 5, 7
-        1, 2, 4, 3, 7, 6, 5
-        1, 2, 4, 3, 7, 5, 6
-    '''
-    graph.bft(1)
+	'''
+	Valid BFT paths:
+		1, 2, 3, 4, 5, 6, 7
+		1, 2, 3, 4, 5, 7, 6
+		1, 2, 3, 4, 6, 7, 5
+		1, 2, 3, 4, 6, 5, 7
+		1, 2, 3, 4, 7, 6, 5
+		1, 2, 3, 4, 7, 5, 6
+		1, 2, 4, 3, 5, 6, 7
+		1, 2, 4, 3, 5, 7, 6
+		1, 2, 4, 3, 6, 7, 5
+		1, 2, 4, 3, 6, 5, 7
+		1, 2, 4, 3, 7, 6, 5
+		1, 2, 4, 3, 7, 5, 6
+	'''
+	graph.bft(1)
 
-    '''
-    Valid DFT paths:
-        1, 2, 3, 5, 4, 6, 7
-        1, 2, 3, 5, 4, 7, 6
-        1, 2, 4, 7, 6, 3, 5
-        1, 2, 4, 6, 3, 5, 7
-    '''
-    graph.dft(1)
-    graph.dft_recursive(1)
+	'''
+	Valid DFT paths:
+		1, 2, 3, 5, 4, 6, 7
+		1, 2, 3, 5, 4, 7, 6
+		1, 2, 4, 7, 6, 3, 5
+		1, 2, 4, 6, 3, 5, 7
+	'''
+	graph.dft(1)
+	graph.dft_recursive(1)
 
-    '''
-    Valid BFS path:
-        [1, 2, 4, 6]
-    '''
-    print(graph.bfs(1, 6))
+	'''
+	Valid BFS path:
+		[1, 2, 4, 6]
+	'''
+	print(graph.bfs(1, 6))
 
-    '''
-    Valid DFS paths:
-        [1, 2, 4, 6]
-        [1, 2, 4, 7, 6]
-    '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+	'''
+	Valid DFS paths:
+		[1, 2, 4, 6]
+		[1, 2, 4, 7, 6]
+	'''
+	print(graph.dfs(1, 6))
+	print(graph.dfs_recursive(1, 6))

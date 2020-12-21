@@ -1,3 +1,6 @@
+from util import Queue
+import random 
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -45,6 +48,8 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(num_users):
+            self.add_user(i +1)
 
         # Create friendships
 
@@ -59,6 +64,17 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        q = Queue()
+        q.enqueue([user_id])
+        while q.size() > 0:
+            path = q.dequeue()
+            new_user = path [-1]
+            if new_user not in visited:
+                visited[new_user] = path
+                for neighbor in self.friendships[new_user]:
+                    new_path = list(path)
+                    new_path.append(neighbor)
+                    q.enqueue(new_path)
         return visited
 
 
